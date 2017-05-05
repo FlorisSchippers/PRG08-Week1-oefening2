@@ -1,18 +1,25 @@
-class Rock {
+/// <reference path="gameobject.ts"/>
 
-    private speed:number;
-                        
-    constructor(tag:string, parent:HTMLElement) {
+class Rock extends GameObject {
+
+    private speed: number;
+
+    constructor() {
+        let container: HTMLElement = document.getElementById("container");
+        super("rock", container, 492, 208);
         this.speed = 0;
-        this.move();
     }
 
-    public move():void {
+    public move(): void {
+        this.y += this.speed;
+        this.draw();
 
-        // speed optellen zo lang we niet de bodem raken
-        // speed wordt hoger dan 0 zodra de auto de rots raakt
-        
-        //teken de div op de juiste positie
-        //this.div.style.transform ="translate(490px,210px)";     
+        if (this.y + 62 >= 600) {
+            this.adjustSpeed(0);
+        }
+    }
+
+    public adjustSpeed(speed: number) {
+        this.speed = speed;
     }
 }

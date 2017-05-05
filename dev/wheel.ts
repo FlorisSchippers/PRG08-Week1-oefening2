@@ -1,12 +1,8 @@
-class Wheel {
-                        
-    constructor() {
-        // het DOM element waar de div in geplaatst wordt:
-        let container:HTMLElement = document.getElementById("container");
+/// <reference path="gameobject.ts"/>
 
-        let div = document.createElement("wheel");
-        container.appendChild(div);
+class Wheel extends GameObject {
 
-        div.style.transform ="translate(0px, 30px)";
+    constructor(div: HTMLElement, x: number, y: number) {
+        super("wheel", div, x, y);
     }
 }

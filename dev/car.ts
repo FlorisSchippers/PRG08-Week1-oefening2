@@ -1,43 +1,48 @@
 /// <reference path="wheel.ts"/>
+/// <reference path="gameobject.ts"/>
 
-class Car {
+class Car extends GameObject {
 
-    private speed:number;
-    private div:HTMLElement;
-    private braking:boolean;
-            
-    constructor() {
-        // het DOM element waar de div in geplaatst wordt:
-        let container:HTMLElement = document.getElementById("container");
+    private speed: number;
+    private game: Game;
+    private braking: boolean;
 
-        this.div = document.createElement("car");
-        container.appendChild(this.div);
+    constructor(game: Game) {
+        let container: HTMLElement = document.getElementById("container");
+        super("car", container, -145, 220);
+        let leftWheel = new Wheel(this.div, 15, 30);
+        let rightWheel = new Wheel(this.div, 105, 30);
 
-        this.speed = 4;
+        this.speed = 3;
+        this.game = game;
+        this.braking = false;
 
-        // hier een keypress event listener toevoegen. een keypress zorgt dat braking true wordt
-        //
-
-        // alvast goed zetten
+        window.addEventListener("keydown", (e: KeyboardEvent) => this.onKeyDown(e));
 
         this.move();
     }
 
-    public move():void {
-        // hier de snelheid verlagen als we aan het afremmen zijn
-        //
+    private onKeyDown(event: KeyboardEvent): void {
+        if (event.keyCode == 32) {
+            this.braking = true;
+        }
+    }
 
-        // hier kijken of de x waarde hoger is dan de x van de rots (335)
-        //
-
-        // de snelheid bij de x waarde optellen
-        //
-        
-        // tekenen
-        this.div.style.transform ="translate(200px,220px)";
-    } 
-
-    //
-    // hier een method maken voor on key press
-    //
+    public move(): void {
+        if (this.speed <= 0) {
+            this.game.endGame();
+        } else {
+            if (this.braking) {
+                if (this.speed > 0) {
+                    this.speed -= 0.1;
+                }
+            }
+            if (this.x + 145 >= 492) {
+                this.speed = 0;
+                this.game.rock.adjustSpeed(5);
+            }
+            this.x += this.speed;
+            this.draw();
+        }
+    }
 }
