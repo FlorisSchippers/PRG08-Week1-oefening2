@@ -2,11 +2,16 @@
 
 class Rock extends GameObject {
 
+    public width: number;
+    public height: number;
     private speed: number;
 
     constructor() {
         let container: HTMLElement = document.getElementById("container");
         super("rock", container, 492, 208);
+        
+        this.width = 62;
+        this.height = 62;
         this.speed = 0;
     }
 

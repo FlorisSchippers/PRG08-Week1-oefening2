@@ -25,14 +25,15 @@ var Wheel = (function (_super) {
 }(GameObject));
 var Car = (function (_super) {
     __extends(Car, _super);
-    function Car(game) {
+    function Car() {
         var _this = this;
         var container = document.getElementById("container");
         _super.call(this, "car", container, -145, 220);
         var leftWheel = new Wheel(this.div, 15, 30);
         var rightWheel = new Wheel(this.div, 105, 30);
+        this.width = 145;
+        this.height = 45;
         this.speed = 3;
-        this.game = game;
         this.braking = false;
         window.addEventListener("keydown", function (e) { return _this.onKeyDown(e); });
         this.move();
@@ -44,7 +45,7 @@ var Car = (function (_super) {
     };
     Car.prototype.move = function () {
         if (this.speed <= 0) {
-            this.game.endGame();
+            Game.getInstance().endGame();
         }
         else {
             if (this.braking) {
@@ -54,7 +55,7 @@ var Car = (function (_super) {
             }
             if (this.x + 145 >= 492) {
                 this.speed = 0;
-                this.game.rock.adjustSpeed(5);
+                Game.getInstance().rock.adjustSpeed(5);
             }
             this.x += this.speed;
             this.draw();
@@ -65,7 +66,7 @@ var Car = (function (_super) {
 var Game = (function () {
     function Game() {
         var _this = this;
-        this.car = new Car(this);
+        this.car = new Car();
         this.rock = new Rock();
         requestAnimationFrame(function () { return _this.gameLoop(); });
     }
@@ -73,7 +74,16 @@ var Game = (function () {
         var _this = this;
         this.car.move();
         this.rock.move();
+        if (Utils.checkCollision(Car, Rock)) {
+            this.endGame();
+        }
         requestAnimationFrame(function () { return _this.gameLoop(); });
+    };
+    Game.getInstance = function () {
+        if (!Game.instance) {
+            Game.instance = new Game();
+        }
+        return Game.instance;
     };
     Game.prototype.endGame = function () {
         var carfix = this.car.x + 145;
@@ -89,13 +99,15 @@ var Game = (function () {
     return Game;
 }());
 window.addEventListener("load", function () {
-    new Game();
+    Game.getInstance();
 });
 var Rock = (function (_super) {
     __extends(Rock, _super);
     function Rock() {
         var container = document.getElementById("container");
         _super.call(this, "rock", container, 492, 208);
+        this.width = 62;
+        this.height = 62;
         this.speed = 0;
     }
     Rock.prototype.move = function () {
@@ -110,4 +122,20 @@ var Rock = (function (_super) {
     };
     return Rock;
 }(GameObject));
+var Utils = (function () {
+    function Utils() {
+    }
+    Utils.checkCollision = function (instance1, instance2) {
+        if (instance1.x < instance2.x + instance2.width &&
+            instance1.x + instance1.width > instance2.x &&
+            instance1.y < instance2.y + instance2.height &&
+            instance1.height + instance1.y > instance2.y) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    return Utils;
+}());
 //# sourceMappingURL=main.js.map

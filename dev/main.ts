@@ -2,11 +2,12 @@
 
 class Game {
 
+    private static instance: Game;
     private car: Car;
     public rock: Rock;
 
-    constructor() {
-        this.car = new Car(this);
+    private constructor() {
+        this.car = new Car();
         this.rock = new Rock();
         requestAnimationFrame(() => this.gameLoop());
     }
@@ -14,7 +15,17 @@ class Game {
     private gameLoop() {
         this.car.move();
         this.rock.move();
+        if (Utils.checkCollision(Car, Rock)){
+            this.endGame();
+        }
         requestAnimationFrame(() => this.gameLoop());
+    }
+
+    public static getInstance() {
+        if (!Game.instance) {
+            Game.instance = new Game();
+        }
+        return Game.instance;
     }
 
     public endGame() {
@@ -29,8 +40,7 @@ class Game {
     }
 }
 
-
 // load
 window.addEventListener("load", function () {
-    new Game();
+    Game.getInstance();
 });
